@@ -229,16 +229,25 @@ async function storeNotification(
   return storeNotificationShared(c, lookupHash, payload);
 }
 
-app.get('/health', (c) => {
-  return c.json({
+function buildHealthResponse(c: any) {
+  return {
+    backend: 'ok',
     status: 'healthy',
     timestamp: new Date().toISOString(),
     environment: c.env.ENVIRONMENT || 'development',
     services: {
       telegram: !!c.env.TELEGRAM_BOT_TOKEN,
-      kv: true
-    }
-  });
+      kv: true,
+    },
+  };
+}
+
+app.get('/health', (c) => {
+  return c.json(buildHealthResponse(c));
+});
+
+app.get('/api/health', (c) => {
+  return c.json(buildHealthResponse(c));
 });
 
 // Beta Signup Endpoint with Telegram Notifications
