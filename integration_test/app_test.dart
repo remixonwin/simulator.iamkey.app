@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:simulator/main.dart' as app;
@@ -36,7 +37,7 @@ void main() {
       await adb.verifyCleared();
 
       // 7. Success
-      print('--- E2E Test Passed Successfully ---');
+      debugPrint('--- E2E Test Passed Successfully ---');
     });
   });
 }

@@ -1,0 +1,42 @@
+name: Simulator E2E
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  e2e-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable'
+        flutter-version: '3.19.0' # Pin version for stability
+
+    - name: Install dependencies
+      run: flutter pub get
+
+    - name: Start Simulator Environment
+      run: |
+        # Ensure backend is built with latest context
+        docker compose build backend
+        docker compose up -d postgres redis backend anvil sim-control telegram-mock fcm-mock
+        
+        echo "Waiting for services to initialize..."
+        sleep 30
+        
+        docker compose ps
+        
+        # Simple health check (optional, checking backend)
+        curl -v http://localhost:3001/health || echo "Backend check failed (might just be strictly internal)"
+
+    - name: Run E2E Suite
+      # Use localhost for simulator host in CI since docker ports are mapped to runner
+      run: flutter test -d flutter-tester --dart-define=SIMULATOR_HOST=localhost integration_test/full_suite_test.dart

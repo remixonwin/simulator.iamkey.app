@@ -80,6 +80,7 @@ class _AdbConnectFormState extends ConsumerState<AdbConnectForm> {
           ),
           const SizedBox(height: 24),
           TextFormField(
+            key: const Key('ip_field'),
             controller: _controller,
             decoration: InputDecoration(
               hintText: 'e.g. 192.168.1.15:5555',
@@ -117,6 +118,7 @@ class _AdbConnectFormState extends ConsumerState<AdbConnectForm> {
           ),
           const SizedBox(height: 24),
           ElevatedButton(
+            key: const Key('connect_button'),
             onPressed: _isLoading ? null : _handleConnect,
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -137,6 +139,7 @@ class _AdbConnectFormState extends ConsumerState<AdbConnectForm> {
             AdbLogView(ipAddress: _connectedIp!),
             const SizedBox(height: 16),
             TextButton.icon(
+              key: const Key('stop_logs_button'),
               onPressed: () => setState(() => _connectedIp = null),
               icon: const Icon(Icons.close_rounded, size: 16),
               label: const Text('Stop Logs'),

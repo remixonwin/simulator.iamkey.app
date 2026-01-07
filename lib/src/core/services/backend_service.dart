@@ -11,7 +11,7 @@ class BackendService extends _$BackendService {
   void build() {
     _dio = Dio(
       BaseOptions(
-        baseUrl: 'http://localhost:3000/api',
+        baseUrl: 'http://192.168.1.172:3001/api',
         connectTimeout: const Duration(seconds: 5),
         receiveTimeout: const Duration(seconds: 3),
       ),

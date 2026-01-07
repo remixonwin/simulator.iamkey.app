@@ -1,0 +1,25 @@
+{
+  "name": "simulator-scenarios",
+  "version": "1.0.0",
+  "description": "Scenario orchestration for IAMKey Blackbox Simulator",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx watch src/index.ts",
+    "run:scenario": "tsx src/cli.ts"
+  },
+  "dependencies": {
+    "ethers": "^6.9.0",
+    "pg": "^8.11.3",
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0",
+    "ora": "^8.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/pg": "^8.10.9",
+    "tsx": "^4.6.2",
+    "typescript": "^5.3.2"
+  }
+}

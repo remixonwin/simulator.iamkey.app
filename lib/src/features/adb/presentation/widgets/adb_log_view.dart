@@ -106,7 +106,7 @@ class _AdbLogViewState extends ConsumerState<AdbLogView> {
       }
 
       _channel = WebSocketChannel.connect(
-        Uri.parse('ws://localhost:3000/ws/logs'),
+        Uri.parse('ws://192.168.1.172:3001/ws/logs'),
       );
 
       _channel!.stream.listen(
@@ -300,6 +300,7 @@ class _AdbLogViewState extends ConsumerState<AdbLogView> {
           const Spacer(),
           _buildAppDropdown(),
           IconButton(
+            key: const Key('expand_button'),
             onPressed: () => setState(() => _isExpanded = !_isExpanded),
             icon: Icon(
               _isExpanded
@@ -323,6 +324,7 @@ class _AdbLogViewState extends ConsumerState<AdbLogView> {
             child: SizedBox(
               height: 36,
               child: TextField(
+                key: const Key('search_field'),
                 controller: _searchController,
                 style: const TextStyle(color: Colors.white, fontSize: 12),
                 decoration: InputDecoration(
@@ -357,6 +359,7 @@ class _AdbLogViewState extends ConsumerState<AdbLogView> {
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<LogLevel>(
+                key: const Key('level_dropdown'),
                 value: _selectedLevel,
                 dropdownColor: const Color(0xFF1A1A1A),
                 icon: const Icon(
@@ -394,6 +397,7 @@ class _AdbLogViewState extends ConsumerState<AdbLogView> {
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
+          key: const Key('app_filter_dropdown'),
           value: _selectedApp,
           hint: Text(
             _isLoadingApps ? 'Wait...' : 'Filtering Process',
@@ -446,6 +450,7 @@ class _AdbLogViewState extends ConsumerState<AdbLogView> {
           ),
           const Spacer(),
           TextButton(
+            key: const Key('clear_button'),
             onPressed: _clearLogs,
             style: TextButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 12),

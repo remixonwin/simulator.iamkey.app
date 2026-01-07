@@ -41,7 +41,7 @@ final class BackendServiceProvider
   }
 }
 
-String _$backendServiceHash() => r'1b54a831e2495b5d9eb06fa8e269ced7cc33de57';
+String _$backendServiceHash() => r'91532cb99fb5f078f0d41fd9cb86092ab30e5810';
 
 abstract class _$BackendService extends $Notifier<void> {
   void build();

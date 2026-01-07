@@ -11,14 +11,21 @@ class WelcomeRobot {
   }
 
   Future<void> enterIpAddress(String ip) async {
-    final field = find.byType(TextFormField);
+    final field = find.byKey(const Key('ip_field'));
     await tester.enterText(field, ip);
     await tester.pumpAndSettle();
   }
 
   Future<void> tapConnect() async {
-    final button = find.text('Connect Device');
+    final button = find.byKey(const Key('connect_button'));
     await tester.tap(button);
     await tester.pumpAndSettle(const Duration(seconds: 2));
+  }
+
+  Future<void> tapTestIdentityRegistration() async {
+    final button = find.text('Test Identity Registration');
+    await tester.ensureVisible(button);
+    await tester.tap(button);
+    await tester.pumpAndSettle();
   }
 }
