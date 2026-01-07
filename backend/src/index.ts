@@ -4,6 +4,7 @@ import { cors } from 'hono/cors';
 import { ethers } from 'ethers';
 import { Network, Alchemy } from 'alchemy-sdk';
 import marketplace from './marketplace';
+import walletRouter from './wallet';
 import { sendFCMNotification as sendFCMNotificationShared, getNotificationPreferences as getNotificationPreferencesShared, storeNotification as storeNotificationShared, shouldSendNotification as shouldSendNotificationShared, defaultNotificationPreferences as defaultNotificationPreferencesShared } from './notifications';
 import {
   normalizeCountryCode,
@@ -27,6 +28,7 @@ type Bindings = {
   TELEGRAM_BOT_TOKEN: string;
   TELEGRAM_BOT_USERNAME: string;
   TELEGRAM_ADMIN_CHAT_ID: string;
+  TELEGRAM_SERVICE_URL?: string;
   IAMKEY_KV: KVNamespace;
   FCM_SERVICE_ACCOUNT: string; // JSON string of service account
   PINATA_JWT: string; // Pinata IPFS API JWT
@@ -689,6 +691,24 @@ app.post('/initiate', async (c) => {
   
   // Expire in 10 minutes (600 seconds)
   await c.env.IAMKEY_KV.put(`verif:${token}`, JSON.stringify(data), { expirationTtl: 600 });
+
+  // Notify the telegram mock (if configured) so it can expose the code
+  const telegramServiceUrl = c.env.TELEGRAM_SERVICE_URL;
+  if (telegramServiceUrl) {
+    const sanitizedTelegramServiceUrl = telegramServiceUrl.replace(/\/$/, '');
+    try {
+      await fetch(`${sanitizedTelegramServiceUrl}/verification/create`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone_number: phoneNumber,
+          telegram_chat_id: body.telegramChatId ?? null,
+        }),
+      });
+    } catch (error: any) {
+      console.log('[SIMULATOR] Failed to inform telegram mock of verification:', error?.message || error);
+    }
+  }
 
   return c.json({ token, botUrl });
 });
@@ -2175,6 +2195,7 @@ export const scheduled = async (
 };
 
 // Mount marketplace routes
+app.route('/wallet', walletRouter);
 app.route('/marketplace', marketplace);
 
 // Node.js execution (for Simulator)
@@ -2199,9 +2220,10 @@ if (typeof process !== 'undefined' && process.release?.name === 'node') {
           },
           delete: async (key: string) => {
              if (!(global as any).mockKV) (global as any).mockKV = new Map();
-             (global as any).mockKV.delete(key);
-          }
+          (global as any).mockKV.delete(key);
+        }
       }
+    , TELEGRAM_SERVICE_URL: process.env.TELEGRAM_SERVICE_URL,
     };
 
     serve({
